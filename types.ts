@@ -77,7 +77,7 @@ export interface CMSContent {
 export interface Achievement {
   id: string;
   projectName: string;
-  category: 'Education' | 'Infrastructure' | 'Youth' | 'Economy' | 'Community' | 'Legislative';
+  category: 'Education' | 'Infrastructure' | 'Youth' | 'Economy' | 'Community' | 'Legislative' | 'Agriculture' | 'Healthcare';
   description: string;
   location: string;
   impactMetrics: string;
@@ -131,4 +131,12 @@ export enum FormStatus {
 export interface ChatMessage {
   role: 'user' | 'model';
   text: string;
+}
+
+export interface Inquiry {
+  firstName: string;
+  lastName: string;
+  email: string;
+  topic: string;
+  message: string;
 }

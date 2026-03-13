@@ -25,7 +25,7 @@ const Media: React.FC = () => {
               </h2>
               <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                 <p className="text-gray-600 mb-4">
-                  Download the official biography, policy one-pagers, and branding assets for Hon. Ndindi Nyoro.
+                  Download the official biography, policy one-pagers, and branding assets for Hon. Kelvin Migongo.
                 </p>
                 <div className="flex flex-wrap gap-4">
                   <button className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">

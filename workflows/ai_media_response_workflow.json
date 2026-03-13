@@ -97,8 +97,8 @@
         },
         {
             "parameters": {
-                "fromEmail": "notifications@ndindinyoro.com",
-                "toEmail": "press@ndindinyoro.com",
+                "fromEmail": "notifications@kelvinmigongo.com",
+                "toEmail": "press@kelvinmigongo.com",
                 "subject": "New AI Draft Response Ready",
                 "text": "={{ \"A new press inquiry from \" + $node[\"Airtable Trigger\"].json.Organization + \" has been drafted. Please review in Airtable.\" }}",
                 "options": {}

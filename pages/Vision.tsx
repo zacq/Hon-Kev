@@ -7,9 +7,9 @@ const Vision: React.FC = () => {
     <div className="pt-8 pb-20">
       <div className="bg-campaign-primary text-white py-16 mb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl font-serif font-bold sm:text-5xl">Legislative Work & Vision</h1>
+          <h1 className="text-4xl font-serif font-bold sm:text-5xl">Vision & Policy</h1>
           <p className="mt-4 text-xl text-green-100 max-w-2xl mx-auto">
-            A voice for the people in Parliament and a blueprint for Kiharu's modernization.
+            The 5-Point Policy Plan is a blueprint for national economic transformation and sustainable development.
           </p>
         </div>
       </div>

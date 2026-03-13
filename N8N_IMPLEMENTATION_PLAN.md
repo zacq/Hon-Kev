@@ -60,7 +60,7 @@ Before creating the new workflows, ensure the following tables exist in your Air
     -   **Trigger Field:** `Response Status`
     -   **Trigger Value:** `New` (or triggers on creation).
 2.  **AI Processing:** `Google Gemini Chat` Node
-    -   **System Prompt:** "You are the Press Secretary for Hon. Ndindi Nyoro. Draft a professional, trustworthy, and accountable response to the following press inquiry..."
+    -   **System Prompt:** "You are the Press Secretary for Hon. Kelvin Migongo. Draft a professional, trustworthy, and accountable response to the following press inquiry..."
     -   **Input:** Description/Inquiry Text from Airtable.
 3.  **Update CRM:** `Airtable Update` Node
     -   **Action:** Update the specific record.

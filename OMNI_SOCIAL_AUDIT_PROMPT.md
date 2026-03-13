@@ -63,7 +63,7 @@ Generate the response in this exact Markdown key-value structure:
 - **Content Quality:** [e.g., "Posting raw footage. Lacks hooks/scripts. Beaten by algorithmic content."]
 - **Engagement:** [e.g., "Comments are ignored. No auto-reply infrastructure."]
 
-**3. The Solution (The "Kiharu Model")**
+**3. The Solution (The "Nakuru Model")**
 *Apply these specific technical solutions:*
 - **Gap:** [e.g., "Inconsistent Posting"] -> **Solution:** "Implement n8n 'Legislative Broadcaster' workflow to auto-syndicate Airtable CMS content to X/FB/WhatsApp simultaneously."
 - **Gap:** [e.g., "Unanswered Comments"] -> **Solution:** "Deploy 'AI Auto-Reply Agent' (Gemini/OpenAI) to ingest policy PDFs and answer constituent questions 24/7."

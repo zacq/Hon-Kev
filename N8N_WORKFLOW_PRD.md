@@ -44,7 +44,7 @@ The goal of the n8n automation layer is to serve as the "bridge" between Hon. Nd
 - **Process:**
     1. Send inquiry text to **Google Gemini API**.
     2. Prompt: "Generate a press response following the Kiharu Model style guide (Trustworthy, Accountable)."
-    3. Email draft back to `press@ndindinyoro.com` for final human approval.
+    3. Email draft back to `press@kelvinmigongo.com` for final human approval.
 - **Success Metric:** Reduced lead time for press releases.
 
 ---

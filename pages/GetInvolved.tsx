@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { submitVolunteerData } from '../services/mockDatabase';
+import { airtableService } from '../services/airtableService';
 import { VolunteerFormData, FormStatus } from '../types';
-import { CheckCircle, Users, Megaphone, Calendar } from 'lucide-react';
+import { CheckCircle2, Users, Megaphone, Calendar, Heart, Share2, ArrowRight, Loader2, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const GetInvolved: React.FC = () => {
   const [formData, setFormData] = useState<VolunteerFormData>({
@@ -10,7 +11,7 @@ const GetInvolved: React.FC = () => {
     phone: '',
     skills: '',
     availability: 'Weekends',
-    county: 'Murang\'a',
+    county: 'Nakuru',
     rolePreference: 'Grassroots Mobilization'
   });
   const [status, setStatus] = useState<FormStatus>(FormStatus.IDLE);
@@ -19,155 +20,268 @@ const GetInvolved: React.FC = () => {
     e.preventDefault();
     setStatus(FormStatus.SUBMITTING);
     try {
-      await submitVolunteerData(formData);
+      await airtableService.addVolunteer(formData as any);
       setStatus(FormStatus.SUCCESS);
     } catch (e) {
+      console.error(e);
       setStatus(FormStatus.ERROR);
     }
   };
 
+  const involvementPaths = [
+    {
+      icon: Users,
+      title: "Grassroots Mobilization",
+      desc: "Join our network of community leaders and help us organize house-to-house and ward events.",
+      color: "emerald"
+    },
+    {
+      icon: Megaphone,
+      title: "Digital Advocacy",
+      desc: "Help amplify our message online. Perfect for content creators and social media enthusiasts.",
+      color: "blue"
+    },
+    {
+      icon: Calendar,
+      title: "Event Coordination",
+      desc: "Support our town halls, rallies, and community outreach programs across the constituency.",
+      color: "amber"
+    }
+  ];
+
   if (status === FormStatus.SUCCESS) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-        <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center">
-          <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
-            <CheckCircle className="h-10 w-10 text-campaign-primary" />
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Karibu! Welcome Aboard!</h2>
-          <p className="text-gray-600 mb-6">
-            Thank you for volunteering. Our field coordinator will contact you within 24 hours to get you started.
+      <div className="min-h-screen flex items-center justify-center bg-zinc-900 px-4">
+        <motion.div 
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="max-w-md w-full bg-white rounded-[2.5rem] shadow-2xl p-10 text-center relative overflow-hidden"
+        >
+          <div className="absolute top-0 left-0 w-full h-2 bg-emerald-500" />
+          <motion.div 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-emerald-50 mb-8"
+          >
+            <CheckCircle2 className="h-10 w-10 text-emerald-600" />
+          </motion.div>
+          <h2 className="text-3xl font-bold text-zinc-900 mb-4">You're in the Family!</h2>
+          <p className="text-zinc-600 mb-8 leading-relaxed">
+            Thank you for stepping up, <span className="font-bold text-zinc-900">{formData.fullName.split(' ')[0]}</span>. 
+            Our regional coordinator will reach out to you via WhatsApp within 24 hours.
           </p>
           <button
             onClick={() => setStatus(FormStatus.IDLE)}
-            className="text-campaign-primary font-medium hover:underline"
+            className="w-full py-4 bg-zinc-900 text-white rounded-2xl font-bold hover:bg-emerald-600 transition-all shadow-lg"
           >
-            Register another volunteer
+            Register Another Volunteer
           </button>
-        </div>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="pt-8 pb-20">
+    <div className="min-h-screen pt-24 pb-20 bg-zinc-50 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-serif font-bold text-gray-900">Get Involved</h1>
-          <p className="mt-4 text-xl text-gray-600">
-            Change doesn't happen by watching. It happens by doing.
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-16">
-          {/* Information Column */}
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Ways to Help</h2>
-            {/* Icons... omitted for brevity if possible, keeping them for consistency */}
-          </div>
-
-          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
-            <h3 className="text-xl font-bold text-gray-900 mb-6">Volunteer Sign Up</h3>
-            {status === FormStatus.ERROR && (
-              <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg mb-6 text-sm">
-                We couldn't process your application at this time. Please try again or contact us directly.
+        
+        <div className="grid lg:grid-cols-12 gap-16 items-start">
+          
+          {/* Left Side: Content & Inspiration */}
+          <div className="lg:col-span-5 space-y-12">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+            >
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-widest mb-6 border border-emerald-200">
+                <Sparkles className="h-3 w-3" /> Movement 2027
               </div>
-            )}
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Full Name</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.fullName}
-                  onChange={e => setFormData({ ...formData, fullName: e.target.value })}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-campaign-primary focus:border-campaign-primary"
-                />
-              </div>
+              <h1 className="text-5xl md:text-7xl font-bold font-serif leading-tight text-zinc-900 mb-6">
+                Be the <span className="italic text-emerald-600">Catalyst</span> for Change.
+              </h1>
+              <p className="text-xl text-zinc-500 leading-relaxed">
+                Our vision for Bahati isn't just a political plan—it's a communal promise. Join the movement that's putting people first.
+              </p>
+            </motion.div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Email</label>
-                  <input
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={e => setFormData({ ...formData, email: e.target.value })}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-campaign-primary focus:border-campaign-primary"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Phone</label>
-                  <input
-                    type="tel"
-                    required
-                    value={formData.phone}
-                    onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-campaign-primary focus:border-campaign-primary"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">County</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.county}
-                    onChange={e => setFormData({ ...formData, county: e.target.value })}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-campaign-primary focus:border-campaign-primary"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Availability</label>
-                  <select
-                    value={formData.availability}
-                    onChange={e => setFormData({ ...formData, availability: e.target.value })}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-campaign-primary focus:border-campaign-primary"
-                  >
-                    <option>Weekdays</option>
-                    <option>Weekends</option>
-                    <option>Evenings</option>
-                    <option>Full-time</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Role Preference</label>
-                <select
-                  value={formData.rolePreference}
-                  onChange={e => setFormData({ ...formData, rolePreference: e.target.value })}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-campaign-primary focus:border-campaign-primary"
+            <div className="space-y-6">
+              {involvementPaths.map((path, i) => (
+                <motion.div 
+                  key={path.title}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 * i }}
+                  className="flex gap-6 p-6 rounded-3xl bg-white border border-zinc-100 shadow-sm hover:shadow-md hover:border-emerald-100 transition-all group"
                 >
-                  <option>Grassroots Mobilization</option>
-                  <option>Digital/Social Media</option>
-                  <option>Event Staffing</option>
-                  <option>Data Entry</option>
-                  <option>Professional Services</option>
-                </select>
-              </div>
+                  <div className="h-12 w-12 rounded-2xl bg-zinc-50 flex items-center justify-center shrink-0 group-hover:bg-emerald-600 transition-colors">
+                    <path.icon className="h-6 w-6 text-zinc-400 group-hover:text-white transition-colors" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-zinc-900 mb-1">{path.title}</h3>
+                    <p className="text-zinc-500 text-sm leading-relaxed">{path.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Special Skills / Notes</label>
-                <textarea
-                  rows={2}
-                  value={formData.skills}
-                  onChange={e => setFormData({ ...formData, skills: e.target.value })}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-campaign-primary focus:border-campaign-primary"
-                  placeholder="e.g. Legal, Tech, Design, Languages"
-                />
+            <div className="p-8 rounded-[2rem] bg-zinc-900 text-white relative overflow-hidden shadow-2xl">
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <Heart className="h-24 w-24" />
               </div>
-
-              <button
-                type="submit"
-                disabled={status === FormStatus.SUBMITTING}
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-campaign-primary hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-campaign-primary disabled:opacity-50"
-              >
-                {status === FormStatus.SUBMITTING ? 'Submitting...' : 'Join the Team'}
-              </button>
-            </form>
+              <p className="text-lg font-medium mb-4 relative z-10">"The best way to find yourself is to lose yourself in the service of others."</p>
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-emerald-500" />
+                <div>
+                  <div className="font-bold">Hon. Kevin</div>
+                  <div className="text-zinc-400 text-xs text-emerald-400">Movement Leader</div>
+                </div>
+              </div>
+            </div>
           </div>
+
+          {/* Right Side: High-End Form */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="lg:col-span-7"
+          >
+            <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-zinc-200 border border-zinc-100 p-8 md:p-12 relative">
+              <div className="absolute -top-6 -right-6 h-32 w-32 bg-emerald-500/5 rounded-full blur-3xl animate-pulse" />
+              <div className="absolute -bottom-10 -left-10 h-40 w-40 bg-zinc-900/5 rounded-full blur-3xl" />
+
+              <div className="mb-10">
+                <h2 className="text-3xl font-bold text-zinc-900">Volunteer Application</h2>
+                <p className="text-zinc-400 mt-2">Fill the form below to become part of the progress.</p>
+              </div>
+
+              {status === FormStatus.ERROR && (
+                <div className="bg-rose-50 border border-rose-100 text-rose-600 p-4 rounded-2xl mb-8 text-sm flex items-center gap-3">
+                  <div className="h-2 w-2 bg-rose-500 rounded-full animate-pulse" />
+                  Connection timeout. Please try again or check your internet.
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
+                <div className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-widest text-zinc-400 ml-2">Full Identity</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.fullName}
+                        placeholder="John Doe"
+                        onChange={e => setFormData({ ...formData, fullName: e.target.value })}
+                        className="w-full bg-zinc-50 border-none rounded-2xl py-4 px-6 focus:ring-2 focus:ring-emerald-500 transition-all font-medium text-zinc-900"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold uppercase tracking-widest text-zinc-400 ml-2">Ward / Location</label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.county}
+                          placeholder="e.g. Bahati Central"
+                          onChange={e => setFormData({ ...formData, county: e.target.value })}
+                          className="w-full bg-zinc-50 border-none rounded-2xl py-4 px-6 focus:ring-2 focus:ring-emerald-500 transition-all font-medium text-zinc-900"
+                        />
+                      </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-widest text-zinc-400 ml-2">Email Address</label>
+                      <input
+                        type="email"
+                        required
+                        value={formData.email}
+                        placeholder="john@example.com"
+                        onChange={e => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full bg-zinc-50 border-none rounded-2xl py-4 px-6 focus:ring-2 focus:ring-emerald-500 transition-all font-medium text-zinc-900"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-widest text-zinc-400 ml-2">Phone Number</label>
+                      <input
+                        type="tel"
+                        required
+                        value={formData.phone}
+                        placeholder="+254 7..."
+                        onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full bg-zinc-50 border-none rounded-2xl py-4 px-6 focus:ring-2 focus:ring-emerald-500 transition-all font-medium text-zinc-900"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-widest text-zinc-400 ml-2">Primary Interest</label>
+                      <select
+                        value={formData.rolePreference}
+                        onChange={e => setFormData({ ...formData, rolePreference: e.target.value })}
+                        className="w-full bg-zinc-50 border-none rounded-2xl py-4 px-6 focus:ring-2 focus:ring-emerald-500 transition-all font-medium text-zinc-900 appearance-none cursor-pointer"
+                      >
+                        <option>Grassroots Mobilization</option>
+                        <option>Digital Advocacy</option>
+                        <option>Event Staffing</option>
+                        <option>Professional Services</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-widest text-zinc-400 ml-2">Availability</label>
+                      <select
+                        value={formData.availability}
+                        onChange={e => setFormData({ ...formData, availability: e.target.value })}
+                        className="w-full bg-zinc-50 border-none rounded-2xl py-4 px-6 focus:ring-2 focus:ring-emerald-500 transition-all font-medium text-zinc-900 appearance-none cursor-pointer"
+                      >
+                        <option>Weekends</option>
+                        <option>Weekdays</option>
+                        <option>Evenings</option>
+                        <option>Full-time</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-widest text-zinc-400 ml-2">Skills / How can you help?</label>
+                    <textarea
+                      rows={3}
+                      value={formData.skills}
+                      placeholder="Share your special skills (e.g., Legal, Design, Photography, Community Organizing)..."
+                      onChange={e => setFormData({ ...formData, skills: e.target.value })}
+                      className="w-full bg-zinc-50 border-none rounded-2xl py-4 px-6 focus:ring-2 focus:ring-emerald-500 transition-all font-medium text-zinc-900 resize-none"
+                    />
+                  </div>
+                </div>
+
+                <motion.button
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  disabled={status === FormStatus.SUBMITTING}
+                  className="w-full py-5 px-8 bg-zinc-900 text-white rounded-[1.5rem] font-bold text-lg hover:bg-emerald-600 transition-all shadow-xl shadow-zinc-900/10 flex items-center justify-center gap-3 disabled:opacity-70 group"
+                >
+                  {status === FormStatus.SUBMITTING ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      Syncing with Database...
+                    </>
+                  ) : (
+                    <>
+                      Join the Movement
+                      <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                    </>
+                  )}
+                </motion.button>
+              </form>
+              
+              <div className="mt-8 flex items-center justify-center gap-6 text-zinc-300">
+                <Share2 className="h-5 w-5" />
+                <span className="text-xs font-bold uppercase tracking-widest">Help us share the vision</span>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </div>

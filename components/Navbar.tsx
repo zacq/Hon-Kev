@@ -1,16 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Heart } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import Button from './Button';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navLinks = [
     { name: 'Home', path: '/' },
-    { name: 'About Ndindi', path: '/about' },
-    { name: 'The Kiharu Model', path: '/achievements' },
-    { name: 'Legislative Work', path: '/vision' },
+    { name: 'About Kelvin', path: '/about' },
+    { name: 'Achievements', path: '/achievements' },
+    { name: 'Vision & Policy', path: '/vision' },
     { name: 'News & Media', path: '/blog' },
     { name: 'Contact', path: '/contact' },
   ];
@@ -18,46 +29,73 @@ const Navbar: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm">
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'glass-navbar py-2' : 'bg-transparent py-4'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20">
-          <div className="flex items-center">
-            <Link to="/" className="flex-shrink-0 flex items-center">
-              <span className="font-serif text-2xl font-bold text-campaign-primary">NYORO</span>
-              <span className="ml-2 text-sm font-semibold tracking-widest text-campaign-secondary uppercase hidden md:block border-l-2 border-gray-300 pl-2">
-                Kiharu Representative
+        <div className="flex justify-between items-center h-16">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex items-center"
+          >
+            <Link to="/" className="flex-shrink-0 flex items-center group">
+              <span className={`font-serif text-2xl font-bold transition-colors ${scrolled ? 'text-emerald-700' : 'text-emerald-50'}`}>MIGONGO</span>
+              <span className={`ml-2 text-[10px] font-bold tracking-[0.2em] uppercase hidden md:block border-l-2 border-emerald-500/30 pl-2 transition-colors ${scrolled ? 'text-gray-600' : 'text-emerald-100/80'}`}>
+                Bahati Representative
               </span>
             </Link>
-          </div>
+          </motion.div>
 
           {/* Desktop Menu */}
-          <div className="hidden lg:flex items-center space-x-6">
-            {navLinks.map((link) => (
-              <Link
+          <div className="hidden lg:flex items-center space-x-8">
+            {navLinks.map((link, idx) => (
+              <motion.div
                 key={link.name}
-                to={link.path}
-                className={`text-sm font-medium transition-colors duration-200 ${isActive(link.path)
-                    ? 'text-campaign-primary border-b-2 border-campaign-primary pb-1'
-                    : 'text-gray-600 hover:text-campaign-primary'
-                  }`}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
               >
-                {link.name}
-              </Link>
+                <Link
+                  to={link.path}
+                  className={`text-sm font-medium transition-all relative group ${
+                    isActive(link.path)
+                      ? (scrolled ? 'text-emerald-600' : 'text-white')
+                      : (scrolled ? 'text-gray-600 hover:text-emerald-600' : 'text-emerald-50/90 hover:text-white')
+                  }`}
+                >
+                  {link.name}
+                  {isActive(link.path) && (
+                    <motion.div 
+                      layoutId="nav-underline"
+                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-emerald-600"
+                    />
+                  )}
+                  {!isActive(link.path) && (
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-emerald-500 scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+                  )}
+                </Link>
+              </motion.div>
             ))}
-            <Link
-              to="/donate"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-campaign-accent hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.6 }}
             >
-              <Heart className="w-4 h-4 mr-2" />
-              Donate
-            </Link>
+              <Link to="/donate">
+                <Button variant="primary" size="sm" className="flex items-center gap-2">
+                  <Heart className="w-4 h-4" />
+                  Donate
+                </Button>
+              </Link>
+            </motion.div>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="flex items-center lg:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-campaign-primary"
+              className={`inline-flex items-center justify-center p-2 rounded-lg transition-colors ${
+                scrolled ? 'text-gray-700 hover:bg-black/5' : 'text-white hover:bg-white/10'
+              }`}
             >
               <span className="sr-only">Open main menu</span>
               {isOpen ? <X className="block h-6 w-6" /> : <Menu className="block h-6 w-6" />}
@@ -67,33 +105,40 @@ const Navbar: React.FC = () => {
       </div>
 
       {/* Mobile Menu */}
-      {isOpen && (
-        <div className="lg:hidden bg-white border-t border-gray-100">
-          <div className="pt-2 pb-3 space-y-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.path}
-                onClick={() => setIsOpen(false)}
-                className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${isActive(link.path)
-                    ? 'bg-green-50 border-campaign-primary text-campaign-primary'
-                    : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800'
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="lg:hidden glass-navbar border-t border-white/10 overflow-hidden"
+          >
+            <div className="px-4 pt-2 pb-6 space-y-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  onClick={() => setIsOpen(false)}
+                  className={`block px-4 py-3 rounded-lg text-base font-semibold transition-all ${
+                    isActive(link.path)
+                      ? 'bg-emerald-600 text-white shadow-md'
+                      : 'text-gray-700 hover:bg-black/5'
                   }`}
-              >
-                {link.name}
-              </Link>
-            ))}
-            <Link
-              to="/donate"
-              onClick={() => setIsOpen(false)}
-              className="block w-full text-center mt-4 mx-4 py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-campaign-accent hover:bg-red-700"
-              style={{ width: 'calc(100% - 2rem)' }}
-            >
-              Donate Now
-            </Link>
-          </div>
-        </div>
-      )}
+                >
+                  {link.name}
+                </Link>
+              ))}
+              <div className="pt-4 px-2">
+                <Link to="/donate" onClick={() => setIsOpen(false)}>
+                  <Button variant="primary" className="w-full">
+                    Donate Now
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };
