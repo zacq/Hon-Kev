@@ -19,13 +19,17 @@ const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-bold transition-all duration-300 rounded-2xl focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed';
-  
+  const base = 'inline-flex items-center justify-center font-bold transition-all duration-200 rounded-2xl focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed';
+
   const variants = {
-    primary: 'bg-emerald-500 text-zinc-950 hover:bg-emerald-400 shadow-xl shadow-emerald-500/20 active:scale-95',
-    secondary: 'bg-zinc-800 text-white hover:bg-zinc-700 border border-white/5 active:scale-95',
-    outline: 'border-2 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500 active:scale-95 backdrop-blur-md',
-    ghost: 'text-zinc-400 hover:text-white hover:bg-white/5 active:scale-95',
+    /* Solid green CTA */
+    primary: 'bg-dcp-green text-white hover:bg-dcp-dark shadow-md shadow-green-200 active:scale-95',
+    /* White with green border */
+    secondary: 'bg-white text-dcp-green border-2 border-dcp-green hover:bg-dcp-bg active:scale-95',
+    /* Transparent with green text */
+    ghost: 'text-dcp-green hover:bg-dcp-bg active:scale-95',
+    /* Outlined */
+    outline: 'border-2 border-dcp-green/40 text-dcp-green hover:bg-dcp-bg hover:border-dcp-green active:scale-95 backdrop-blur-md',
   };
 
   const sizes = {
@@ -39,7 +43,7 @@ const Button: React.FC<ButtonProps> = ({
       whileHover={!disabled && !isLoading ? { y: -2 } : {}}
       whileTap={!disabled && !isLoading ? { scale: 0.98 } : {}}
       disabled={disabled || isLoading}
-      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`${base} ${variants[variant]} ${sizes[size]} ${className}`}
       {...props}
     >
       {isLoading ? (
@@ -47,9 +51,7 @@ const Button: React.FC<ButtonProps> = ({
           <Loader2 className="mr-2 h-5 w-5 animate-spin" />
           Processing
         </>
-      ) : (
-        children
-      )}
+      ) : children}
     </motion.button>
   );
 };

@@ -10,8 +10,8 @@ interface GlassCardProps {
 const GlassCard: React.FC<GlassCardProps> = ({ children, className = '', hover = true }) => {
   return (
     <motion.div
-      whileHover={hover ? { y: -5, boxShadow: '0 20px 40px rgba(0, 0, 0, 0.12)' } : {}}
-      className={`glass-card p-6 rounded-2xl ${className}`}
+      whileHover={hover ? { y: -6, boxShadow: '0 18px 40px rgba(0,100,0,0.12), 0 0 18px rgba(0,255,0,0.08)' } : {}}
+      className={`glass-card-light p-6 rounded-2xl ${className}`}
     >
       {children}
     </motion.div>

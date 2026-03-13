@@ -6,25 +6,31 @@
     <title>Hon. Kelvin Migongo | Bahati Official Website</title>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
               sans: ['Inter', 'sans-serif'],
-              serif: ['Merriweather', 'serif'],
+              serif: ['Playfair Display', 'serif'],
             },
             colors: {
-              primary: {
-                DEFAULT: '#15803D',
-                dark: '#064E3B',
-                light: '#DCFCE7',
+              primary: { DEFAULT: '#008000', dark: '#006400', light: '#F0FFF0' },
+              neutral: { gray: '#F7FFF7', dark: '#0F2E0F' },
+              dcp: {
+                white:   '#FFFFFF',
+                bg:      '#F0FFF0',
+                soft:    '#F7FFF7',
+                bright:  '#00FF00',
+                green:   '#008000',
+                dark:    '#006400',
+                pale:    '#90EE90',
+                surface: '#E8FCE8',
+                text:    '#0F2E0F',
+                sub:     '#2F4F2F',
+                muted:   '#5E7A5E',
               },
-              neutral: {
-                gray: '#F3F4F6',
-                dark: '#0F172A',
-              }
             }
           }
         }
