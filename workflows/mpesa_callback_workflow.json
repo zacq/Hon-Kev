@@ -1,0 +1,109 @@
+{
+    "name": "M-Pesa Payment Callbacks",
+    "nodes": [
+        {
+            "parameters": {
+                "chatId": "960558317",
+                "text": "💰 **Payment Received!**\\n\\nAmount: KES {{ $json.Body.stkCallback.CallbackMetadata.Item.find(i => i.Name === 'Amount').Value }}\\nReceipt: {{ $json.Body.stkCallback.CallbackMetadata.Item.find(i => i.Name === 'MpesaReceiptNumber').Value }}\\nStatus: Success ✅",
+                "additionalFields": {}
+            },
+            "id": "telegram-id-123456",
+            "name": "Telegram Notify",
+            "position": [
+                608,
+                208
+            ],
+            "type": "n8n-nodes-base.telegram",
+            "typeVersion": 1.2,
+            "webhookId": "083fb075-a7dc-401b-b3b1-282965ec02eb",
+            "credentials": {
+                "telegramApi": {
+                    "id": "2UfuR88th2M3umdU",
+                    "name": "Telegram account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "base": {
+                    "__rl": true,
+                    "value": "app0g4r9P6gh4BB16",
+                    "mode": "list",
+                    "cachedResultName": "SalesAgent",
+                    "cachedResultUrl": "https://airtable.com/app0g4r9P6gh4BB16"
+                },
+                "table": {
+                    "__rl": true,
+                    "value": "tbl5ATZ2IM4SiGdRh",
+                    "mode": "list",
+                    "cachedResultName": "MpesaPayments",
+                    "cachedResultUrl": "https://airtable.com/app0g4r9P6gh4BB16/tbl5ATZ2IM4SiGdRh"
+                },
+                "options": {}
+            },
+            "id": "airtable-id-123456",
+            "name": "Airtable",
+            "position": [
+                352,
+                208
+            ],
+            "type": "n8n-nodes-base.airtable",
+            "typeVersion": 2.1,
+            "credentials": {
+                "airtableTokenApi": {
+                    "id": "5EOIoEFaL4VlYif1",
+                    "name": "Airtable Personal Access Token account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "mpesa-callback",
+                "options": {}
+            },
+            "id": "webhook-id-123456",
+            "name": "Webhook",
+            "position": [
+                112,
+                208
+            ],
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2.1,
+            "webhookId": "7a2d8e0f-b6b4-4650-b5a2-05560a5023c7"
+        }
+    ],
+    "connections": {
+        "Airtable": {
+            "main": [
+                [
+                    {
+                        "node": "Telegram Notify",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Airtable",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1",
+        "saveDataErrorExecution": "all",
+        "saveDataSuccessExecution": "all",
+        "saveManualExecutions": true,
+        "saveExecutionProgress": true,
+        "callerPolicy": "workflowsFromSameOwner",
+        "availableInMCP": false
+    }
+}

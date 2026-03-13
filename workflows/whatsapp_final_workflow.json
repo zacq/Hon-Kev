@@ -1,0 +1,192 @@
+{
+    "name": "whatsapp final",
+    "nodes": [
+        {
+            "id": "4cc896d5-3336-43cd-80e5-910ef57a8926",
+            "name": "AI Agent",
+            "type": "@n8n/n8n-nodes-langchain.agent",
+            "position": [
+                192,
+                -16
+            ],
+            "disabled": false
+        },
+        {
+            "id": "33c2ccaa-b564-4fcf-9ddc-c13e174a26cb",
+            "name": "OpenAI Chat Model",
+            "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+            "position": [
+                16,
+                288
+            ],
+            "disabled": false
+        },
+        {
+            "id": "971884d2-877d-441a-b418-74addaea901d",
+            "name": "Simple Memory",
+            "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+            "position": [
+                176,
+                352
+            ],
+            "disabled": false
+        },
+        {
+            "id": "e5e553b1-73f4-482c-bb2d-974e56d1b674",
+            "name": "HTTP Request2",
+            "type": "n8n-nodes-base.httpRequest",
+            "position": [
+                688,
+                32
+            ],
+            "disabled": false
+        },
+        {
+            "id": "c2ae5cf3-ca2d-42e8-9e1f-a0c0c73dc4d4",
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "position": [
+                -384,
+                -16
+            ],
+            "disabled": false
+        },
+        {
+            "id": "a1a36a7c-80df-4e8d-a748-652134994f0b",
+            "name": "Pinecone Vector Store",
+            "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+            "position": [
+                512,
+                272
+            ],
+            "disabled": false
+        },
+        {
+            "id": "d9774403-7cfa-4a9c-b585-3c0974a92b9d",
+            "name": "Embeddings OpenAI",
+            "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+            "position": [
+                480,
+                432
+            ],
+            "disabled": false
+        },
+        {
+            "id": "42d5c878-33e2-433d-b151-b88b84009116",
+            "name": "Airtable Tool",
+            "type": "n8n-nodes-base.airtableTool",
+            "position": [
+                600,
+                200
+            ],
+            "disabled": false
+        },
+        {
+            "id": "7ba231ca-0851-4f00-9bb5-bce0add39ae1",
+            "name": "HTTP Request Tool",
+            "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+            "position": [
+                800,
+                200
+            ],
+            "disabled": false
+        }
+    ],
+    "connections": {
+        "AI Agent": {
+            "main": [
+                [
+                    {
+                        "node": "HTTP Request2",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "OpenAI Chat Model": {
+            "ai_languageModel": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "ai_languageModel",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Simple Memory": {
+            "ai_memory": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "ai_memory",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Pinecone Vector Store": {
+            "ai_tool": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "ai_tool",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Embeddings OpenAI": {
+            "ai_embedding": [
+                [
+                    {
+                        "node": "Pinecone Vector Store",
+                        "type": "ai_embedding",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Airtable Tool": {
+            "ai_tool": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "ai_tool",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "HTTP Request Tool": {
+            "ai_tool": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "ai_tool",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1",
+        "saveDataErrorExecution": "all",
+        "saveDataSuccessExecution": "all",
+        "saveManualExecutions": true,
+        "saveExecutionProgress": true
+    }
+}

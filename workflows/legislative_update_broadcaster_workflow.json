@@ -1,0 +1,145 @@
+{
+    "name": "Legislative Update Broadcaster",
+    "nodes": [
+        {
+            "parameters": {
+                "pollInterval": {
+                    "itemValue": 10,
+                    "itemUnit": "minutes"
+                },
+                "authentication": "airtableTokenApi",
+                "base": {
+                    "__rl": true,
+                    "value": "app6j8ItePOm5UZbc",
+                    "mode": "id"
+                },
+                "table": {
+                    "__rl": true,
+                    "value": "CMS Content",
+                    "mode": "name"
+                },
+                "triggerField": "Status",
+                "triggerValue": "Published"
+            },
+            "id": "e6f4b6a1-9b7d-4e2b-8c3a-1f2d3e4b5c6d",
+            "name": "Airtable Trigger",
+            "type": "n8n-nodes-base.airtableTrigger",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://api.twitter.com/2/tweets",
+                "method": "POST",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "text",
+                            "value": "={{ $json.Social_Snippets }}"
+                        }
+                    ]
+                },
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth"
+            },
+            "id": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+            "name": "Post to X (Twitter)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                550,
+                100
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://graph.facebook.com/v18.0/me/feed",
+                "method": "POST",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "message",
+                            "value": "={{ $json.Social_Snippets }}"
+                        },
+                        {
+                            "name": "access_token",
+                            "value": "YOUR_FB_ACCESS_TOKEN"
+                        }
+                    ]
+                }
+            },
+            "id": "f6e5d4c3-b2a1-4098-8765-43210fedcba9",
+            "name": "Post to Facebook",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                550,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://api.twilio.com/2010-04-01/Accounts/{AccountSid}/Messages.json",
+                "method": "POST",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "Body",
+                            "value": "={{ $json.Social_Snippets }}"
+                        },
+                        {
+                            "name": "To",
+                            "value": "whatsapp:+{RecipientNumber}"
+                        },
+                        {
+                            "name": "From",
+                            "value": "whatsapp:+{YourTwilioNumber}"
+                        }
+                    ]
+                },
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpBasicAuth"
+            },
+            "id": "98765432-10fe-dcba-8765-43210fedcba9",
+            "name": "WhatsApp Broadcast",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                550,
+                500
+            ]
+        }
+    ],
+    "connections": {
+        "Airtable Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Post to X (Twitter)",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Post to Facebook",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "WhatsApp Broadcast",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1"
+    }
+}

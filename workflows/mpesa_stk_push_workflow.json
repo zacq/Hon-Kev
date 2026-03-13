@@ -1,0 +1,281 @@
+{
+    "name": "Tool: M-Pesa STK Push with Logging",
+    "nodes": [
+        {
+            "parameters": {},
+            "id": "111111-1111-1111-1111-111111111111",
+            "name": "webhook",
+            "position": [
+                -224,
+                224
+            ],
+            "type": "n8n-nodes-base.executeWorkflowTrigger",
+            "typeVersion": 1
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "=Bearer {{ $node[\"Get Token\"].json.access_token}}"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "BusinessShortCode",
+                            "value": "174379"
+                        },
+                        {
+                            "name": "Password",
+                            "value": "={{ $base64Encode('174379' + 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919' + $now.format('yyyyMMddHHmmss')) }}"
+                        },
+                        {
+                            "name": "Timestamp",
+                            "value": "={{ $now.format('yyyyMMddHHmmss') }}"
+                        },
+                        {
+                            "name": "TransactionType",
+                            "value": "CustomerPayBillOnline"
+                        },
+                        {
+                            "name": "Amount",
+                            "value": "={{ $node[\\\"webhook\\\"].json.amount }}"
+                        },
+                        {
+                            "name": "PartyA",
+                            "value": "={{ $node[\\\"webhook\\\"].json.phoneNumber }}"
+                        },
+                        {
+                            "name": "PartyB",
+                            "value": "174379"
+                        },
+                        {
+                            "name": "PhoneNumber",
+                            "value": "={{ $node[\\\"webhook\\\"].json.phoneNumber }}"
+                        },
+                        {
+                            "name": "CallBackURL",
+                            "value": "https://primary-production-cd196.up.railway.app/webhook/mpesa-callback"
+                        },
+                        {
+                            "name": "AccountReference",
+                            "value": "={{ $node[\\\"webhook\\\"].json.accountReference || 'PremierMotors' }}"
+                        },
+                        {
+                            "name": "TransactionDesc",
+                            "value": "Car Deposit Payment"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "222222-2222-2222-2222-222222222222",
+            "name": "Mpesa",
+            "position": [
+                352,
+                208
+            ],
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1
+        },
+        {
+            "parameters": {
+                "operation": "create",
+                "base": {
+                    "__rl": true,
+                    "value": "app0g4r9P6gh4BB16",
+                    "mode": "list",
+                    "cachedResultName": "SalesAgent",
+                    "cachedResultUrl": "https://airtable.com/app0g4r9P6gh4BB16"
+                },
+                "table": {
+                    "__rl": true,
+                    "value": "tbl5ATZ2IM4SiGdRh",
+                    "mode": "list",
+                    "cachedResultName": "MpesaPayments",
+                    "cachedResultUrl": "https://airtable.com/app0g4r9P6gh4BB16/tbl5ATZ2IM4SiGdRh"
+                },
+                "columns": {
+                    "mappingMode": "autoMapInputData",
+                    "value": {
+                        "Amount": 0
+                    },
+                    "matchingColumns": [],
+                    "schema": [
+                        {
+                            "id": "CheckoutRequestID",
+                            "displayName": "CheckoutRequestID",
+                            "required": false,
+                            "defaultMatch": false,
+                            "canBeUsedToMatch": true,
+                            "display": true,
+                            "type": "string",
+                            "readOnly": false,
+                            "removed": false
+                        },
+                        {
+                            "id": "Phone",
+                            "displayName": "Phone",
+                            "required": false,
+                            "defaultMatch": false,
+                            "canBeUsedToMatch": true,
+                            "display": true,
+                            "type": "string",
+                            "readOnly": false,
+                            "removed": false
+                        },
+                        {
+                            "id": "Amount",
+                            "displayName": "Amount",
+                            "required": false,
+                            "defaultMatch": false,
+                            "canBeUsedToMatch": true,
+                            "display": true,
+                            "type": "number",
+                            "readOnly": false,
+                            "removed": false
+                        },
+                        {
+                            "id": "Status",
+                            "displayName": "Status",
+                            "required": false,
+                            "defaultMatch": false,
+                            "canBeUsedToMatch": true,
+                            "display": true,
+                            "type": "options",
+                            "options": [
+                                {
+                                    "name": "Pending",
+                                    "value": "Pending"
+                                },
+                                {
+                                    "name": "Fullfilled",
+                                    "value": "Fullfilled"
+                                },
+                                {
+                                    "name": "Cancelled",
+                                    "value": "Cancelled"
+                                }
+                            ],
+                            "readOnly": false,
+                            "removed": false
+                        },
+                        {
+                            "id": "MpesaReceipt",
+                            "displayName": "MpesaReceipt",
+                            "required": false,
+                            "defaultMatch": false,
+                            "canBeUsedToMatch": true,
+                            "display": true,
+                            "type": "string",
+                            "readOnly": false,
+                            "removed": false
+                        },
+                        {
+                            "id": "Customer",
+                            "displayName": "Customer",
+                            "required": false,
+                            "defaultMatch": false,
+                            "canBeUsedToMatch": true,
+                            "display": true,
+                            "type": "array",
+                            "readOnly": false,
+                            "removed": false
+                        }
+                    ],
+                    "attemptToConvertTypes": false,
+                    "convertFieldsToString": false
+                },
+                "options": {}
+            },
+            "id": "333333-3333-3333-3333-333333333333",
+            "name": "Airtable Log",
+            "position": [
+                608,
+                208
+            ],
+            "type": "n8n-nodes-base.airtable",
+            "typeVersion": 2.1,
+            "credentials": {
+                "airtableTokenApi": {
+                    "id": "5EOIoEFaL4VlYif1",
+                    "name": "Airtable Personal Access Token account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "url": "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "Basic cDUwWFhnTVo5bHczMXAtbjkzVHI0Z1h1dllMVXNoeTlsQlQxelFCcjZyTVUzY0Q4OnRHS2NaU2dmVWdFcFdBWUJ1SlEwN3FRMjJaVk1VRzlYaEFzTGFVZWJyNHB1ZENEM0JvWTVxbkdDbk9oSm5DcTI="
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "ddf3788b-6afb-49a4-aa1a-098132e2d2b1",
+            "name": "Get Token",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                64,
+                208
+            ]
+        }
+    ],
+    "connections": {
+        "Mpesa": {
+            "main": [
+                [
+                    {
+                        "index": 0,
+                        "node": "Airtable Log",
+                        "type": "main"
+                    }
+                ]
+            ]
+        },
+        "webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Get Token",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Token": {
+            "main": [
+                [
+                    {
+                        "node": "Mpesa",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1",
+        "saveDataErrorExecution": "all",
+        "saveDataSuccessExecution": "all",
+        "saveManualExecutions": true,
+        "saveExecutionProgress": true,
+        "callerPolicy": "workflowsFromSameOwner",
+        "availableInMCP": false
+    }
+}

@@ -1,0 +1,154 @@
+{
+    "name": "AI-Enhanced Media Response",
+    "nodes": [
+        {
+            "parameters": {
+                "pollInterval": {
+                    "itemValue": 10,
+                    "itemUnit": "minutes"
+                },
+                "authentication": "airtableTokenApi",
+                "base": {
+                    "__rl": true,
+                    "value": "app6j8ItePOm5UZbc",
+                    "mode": "id"
+                },
+                "table": {
+                    "__rl": true,
+                    "value": "Press Inquiries",
+                    "mode": "name"
+                },
+                "triggerField": "Response Status",
+                "triggerValue": "New"
+            },
+            "id": "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
+            "name": "Airtable Trigger",
+            "type": "n8n-nodes-base.airtableTrigger",
+            "typeVersion": 1,
+            "position": [
+                200,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+                "method": "POST",
+                "sendQuery": true,
+                "queryParameters": {
+                    "parameters": [
+                        {
+                            "name": "key",
+                            "value": "GEMINI_API_KEY_PLACEHOLDER"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "contents",
+                            "value": "={{ [{\"parts\": [{\"text\": \"You are a Press Secretary. Draft a response to: \" + $json.Inquiry_Text}]}] }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "q1w2e3r4-t5y6-u7i8-o9p0-a1s2d3f4g5h6",
+            "name": "Generate Response (Gemini)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "authentication": "airtableTokenApi",
+                "operation": "update",
+                "base": {
+                    "__rl": true,
+                    "value": "app6j8ItePOm5UZbc",
+                    "mode": "id"
+                },
+                "table": {
+                    "__rl": true,
+                    "value": "Press Inquiries",
+                    "mode": "name"
+                },
+                "id": "={{ $node[\"Airtable Trigger\"].json.id }}",
+                "columns": {
+                    "mappingMode": "defineBelow",
+                    "value": {
+                        "Draft Response": "={{ $json.candidates[0].content.parts[0].text }}",
+                        "Response Status": "Drafted"
+                    }
+                }
+            },
+            "id": "z1x2c3v4-b5n6-m7l8-k9j0-h1g2f3d4s5a6",
+            "name": "Update Airtable Record",
+            "type": "n8n-nodes-base.airtable",
+            "typeVersion": 2,
+            "position": [
+                700,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "fromEmail": "notifications@ndindinyoro.com",
+                "toEmail": "press@ndindinyoro.com",
+                "subject": "New AI Draft Response Ready",
+                "text": "={{ \"A new press inquiry from \" + $node[\"Airtable Trigger\"].json.Organization + \" has been drafted. Please review in Airtable.\" }}",
+                "options": {}
+            },
+            "id": "m1n2b3v4-c5x6-z7l8-k9j0-h1g2f3d4s5a6",
+            "name": "Notify Press Team",
+            "type": "n8n-nodes-base.email",
+            "typeVersion": 2,
+            "position": [
+                950,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Airtable Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Generate Response (Gemini)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Generate Response (Gemini)": {
+            "main": [
+                [
+                    {
+                        "node": "Update Airtable Record",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Update Airtable Record": {
+            "main": [
+                [
+                    {
+                        "node": "Notify Press Team",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1"
+    }
+}
